@@ -136,3 +136,23 @@ class ESM1vEmbedder(ESMEmbedderBase):
             )
 
         super().__init__(device, **kwargs)
+
+
+class ESM2Embedder(ESMEmbedderBase):
+    """ESM-2 Embedder
+
+    Lin, Zeming, et al. "Evolutionary-scale prediction of atomic-level protein structure with a language model."
+    Science 379.6629 (2023). https://doi.org/10.1126/science.ade2574
+    """
+
+    name = "esm2"
+    _picked_layer = 33
+
+    def __init__(self, model_version: str = "esm2_t33_650M_UR50D",
+                 device: Union[None, str, torch.device] = None, **kwargs):
+        self.model_version = model_version
+        super().__init__(device, **kwargs)
+        self._model, self._alphabet = load_model_and_alphabet(self.model_version)
+        self._batch_converter = self._alphabet.get_batch_converter()
+        self._model.to(self._device)
+
